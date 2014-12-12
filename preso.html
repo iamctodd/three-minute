@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Visual Storytelling - MICA - Three Minute Demo - C. Todd Lombardo</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  
+  <!-- Highcharts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
+  
+  
+  <!-- Hard Coded Data HighChart Settings for Energy Graph
+			–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script type="text/javascript">
+			
+$(function () {
+	    $('#oil').highcharts({
+	        title: {
+	            text: 'Energy'
+	        },
+	        xAxis: {
+	            categories: ['2000', '2005', '2006', '2007', '2008', '2009',
+	                '2010', '2011', '2012', '2013', '2014', '2015']
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Thousand barrels/day'
+	            },
+	            plotLines: [{
+	                value: 0,
+	            }]
+	        },
+	        tooltip: {
+	            valueSuffix: '°C'
+	        },
+	        legend: {
+	            enabled: true,
+	        },
+	        series: [
+	        
+	        {
+	            name: 'Production',
+	            lineColor: '#cccccc',
+	            colorByPoint: true,
+	            colors: '#cccccc',
+	            data: [2100, 3050, 3250, 3480, 3400, 3390, 3500, 3520, 3700, 4050, 4400, 4500]
+	        }, {
+	            name: 'Consumption',
+	            lineColor: '#ababab',
+	            colorByPoint: true,
+	            colors: '#BCBCBC',
+	            data: [2400, 2400, 2200, 2400, 2250, 2100, 2300, 2250, 2300, 2320, 2400, 2410]
+	        }]
+	    });
+	});
+	</script>
+	   <!-- .csv file HighChart Settings for GNI
+		–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	  <script>
+		$(document).ready(function() {
+			
+
+			var options = {
+				chart: {
+					renderTo: 'gni',
+					type: 'line'
+				},
+				title: {
+					text: ''
+				},
+				xAxis: {
+					categories: []
+				},
+				yAxis: {
+					title: {
+						text: '$US Current'
+					}
+				},
+				
+				series: [],
+				
+			};
+			
+			/*
+			 Load the data from the CSV file. 				
+			 */ 
+			$.get('http://canada.ctodd.co/data/gni.csv', function(data) {
+				// Split the lines
+				var lines = data.split('\n');
+				$.each(lines, function(lineNo, line) {
+					var items = line.split(',');
+					
+					// header line containes categories
+					if (lineNo == 0) {
+						$.each(items, function(itemNo, item) {
+							if (itemNo > 0) options.xAxis.categories.push(item);
+						});
+					}
+					
+					// the rest of the lines contain data with their name in the first position
+					else {
+						var series = { 
+							data: []
+						};
+						$.each(items, function(itemNo, item) {
+							if (itemNo == 0) {
+								series.name = item;
+							} else {
+								series.data.push(parseFloat(item));
+							}
+						});
+						
+						options.series.push(series);
+
+					}
+					
+				});
+				
+				var chart = new Highcharts.Chart(options);
+				
+									
+			});
+			
+			
+		});
+	</script>
+				
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+	  
+	 <!-- Hard-Coded Data -->
+    <div class="row">
+        <h4>Hard-coded Data</h4>
+        
+            <div id="oil" style="min-width: 510px; height: 400px; margin: 0 auto"></div>
+        
+    </div>
+    
+    <!-- .csv loaded Data -->
+    <div class="row">
+        <h4>.csv file Data</h4>
+        
+            <div id="gni" style="min-width: 510px; height: 400px; margin: 0 auto"></div>
+        
+    </div>
+
+  </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
